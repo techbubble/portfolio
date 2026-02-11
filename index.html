@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rosita Akbarian Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #000;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.hero video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 8vh;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.hero-subtitle {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.scroll-hint {
+  margin-top: 3rem;
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.6), transparent);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Gallery */
+.gallery {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+  columns: 3;
+  column-gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .gallery { columns: 2; }
+}
+
+@media (max-width: 520px) {
+  .gallery { columns: 1; max-width: 480px; }
+}
+
+.gallery-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.gallery-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease;
+  filter: brightness(0.85);
+}
+
+.gallery-item:hover img {
+  transform: scale(1.03);
+  filter: brightness(1);
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 2px;
+  transform: scale(0.94);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal.active img {
+  transform: scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  opacity: 1;
+}
+
+.modal-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+  padding: 1rem;
+  line-height: 1;
+}
+
+.modal-nav:hover {
+  opacity: 0.9;
+}
+
+.modal-prev { left: 1rem; }
+.modal-next { right: 1rem; }
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.25;
+}
+
+/* Fade-in on scroll */
+.gallery-item {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.gallery-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="hero.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay">
+    <h1 class="hero-title">Rosita Akbarian</h1>
+    <p class="hero-subtitle">Portfolio</p>
+    <div class="scroll-hint"></div>
+  </div>
+</section>
+
+<main class="gallery" id="gallery"></main>
+
+<div class="modal" id="modal">
+  <button class="modal-close" aria-label="Close">&times;</button>
+  <button class="modal-nav modal-prev" aria-label="Previous">&#8249;</button>
+  <img src="" alt="">
+  <button class="modal-nav modal-next" aria-label="Next">&#8250;</button>
+</div>
+
+<footer>&copy; Rosita Akbarian</footer>
+
+<script>
+const artworks = [
+  "artworks/001.jpg",
+  "artworks/002.png",
+  "artworks/003.jpg",
+  "artworks/005.jpg",
+  "artworks/007.jpg",
+  "artworks/009.jpg",
+  "artworks/013.png",
+  "artworks/015.jpg",
+  "artworks/016.jpg",
+  "artworks/018.jpg",
+  "artworks/019.png",
+  "artworks/020.jpg",
+  "artworks/022.jpg",
+  "artworks/023.png",
+  "artworks/024.jpg",
+  "artworks/025.jpg",
+  "artworks/028.jpg",
+  "artworks/030.jpg",
+  "artworks/031.jpg",
+  "artworks/032.png",
+  "artworks/033.jpg",
+  "artworks/034.jpg",
+  "artworks/035.jpg",
+  "artworks/036.jpg",
+  "artworks/037.jpg",
+  "artworks/038.jpg",
+  "artworks/039.jpg",
+  "artworks/040.jpg",
+  "artworks/041.jpg",
+  "artworks/042.jpg",
+  "artworks/043.jpg",
+  "artworks/044.png"
+];
+
+// Build gallery
+const gallery = document.getElementById("gallery");
+artworks.forEach((src, i) => {
+  const div = document.createElement("div");
+  div.className = "gallery-item";
+  div.dataset.index = i;
+  div.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+  gallery.appendChild(div);
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll(".gallery-item").forEach(el => observer.observe(el));
+
+// Modal
+const modal = document.getElementById("modal");
+const modalImg = modal.querySelector("img");
+let currentIndex = -1;
+
+function openModal(i) {
+  currentIndex = i;
+  modalImg.src = artworks[i];
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  modal.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function navigate(dir) {
+  currentIndex = (currentIndex + dir + artworks.length) % artworks.length;
+  openModal(currentIndex);
+}
+
+gallery.addEventListener("click", e => {
+  const item = e.target.closest(".gallery-item");
+  if (item) openModal(+item.dataset.index);
+});
+
+modal.querySelector(".modal-close").addEventListener("click", closeModal);
+modal.querySelector(".modal-prev").addEventListener("click", () => navigate(-1));
+modal.querySelector(".modal-next").addEventListener("click", () => navigate(1));
+modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+
+document.addEventListener("keydown", e => {
+  if (!modal.classList.contains("active")) return;
+  if (e.key === "Escape") closeModal();
+  if (e.key === "ArrowLeft") navigate(-1);
+  if (e.key === "ArrowRight") navigate(1);
+});
+</script>
+</body>
+</html>
